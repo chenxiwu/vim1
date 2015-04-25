@@ -103,7 +103,12 @@ set mouse=a                 " Automatically enable mouse usage
 set selection=inclusive
 set selectmode=mouse,key
 
-" No annoying sound on errors
+" 通过使用: commands命令，告诉我们文件的哪一行被改变过
+set report=0
+
+" 在被分割的窗口间显示空白，便于阅读
+set fillchars=vert:\ ,stl:\ ,stlnc:\"
+
 " 去掉输入错误的提示声音
 set title                " change the terminal's title
 set novisualbell         " don't beep
@@ -117,7 +122,13 @@ set viminfo^=%
 " For regular expressions turn magic on
 set magic
 
+" Configure backspace so it acts as it should act
+" 使回格键（backspace）正常处理indent, eol, start等
+" 等效于set backspace=2
+set backspace=eol,start,indent
 
+" 使回格键（backspace）正常处理indent, eol, start等
+set whichwrap+=<,>,h,l
 
 " 带有如下符号的单词不要被换行分割
 set iskeyword+=_,$,@,%,#,-
@@ -125,37 +136,11 @@ set iskeyword+=_,$,@,%,#,-
 " 字符间插入的像素行数目
 set linespace=0
 
-" 增强模式中的命令行自动完
+" 增强模式中的命令行自动完成操作
 set wildmenu
 
-" 使回格键（backspace）正常处理indent, eol, start等
-set backspace=2
-set backspace=eol,start,indent
-" 允许backspace和光标键跨越行边界
-set whichwrap+=<,>,h,l
 
-
-" 通过使用: commands命令，告诉我们文件的哪一行被改变过
-set report=0
-
-" 在被分割的窗口间显示空白，便于阅读
-set fillchars=vert:\ ,stl:\ ,stlnc:\
-
-" 高亮显示匹配的括号
-set showmatch
-
-" 匹配括号高亮的时间（单位是十分之一秒）
-
-set matchtime=1
-
-" 光标移动到buffer的顶部和底部时保持3行距离
-set scrolloff=3
-
-" 为C程序揀要txt.vim脚本）
-au BufRead,BufNewFile *  setfiletype txtet viminfo+=!
-
-
-"=========================================
+"==========================================
 " Display Settings 展示/排版等界面格式设置
 "==========================================
 "
@@ -195,6 +180,9 @@ set incsearch
 set ignorecase
 " 有一个或以上大写字母时仍大小写敏感
 set smartcase     " ignore case if search pattern is all lowercase, case-sensitive otherwise
+
+" 高亮显示普通txt文件（需要txt.vim脚本）
+au BufRead,BufNewFile *  setfiletype txt
 
 " 代码折叠
 set foldenable
@@ -308,10 +296,10 @@ endif
 " 主要按键重定义
 
 " 关闭方向键, 强迫自己用 hjkl
-"map <Left> <Nop>
-"map <Right> <Nop>
-"map <Up> <Nop>
-"map <Down> <Nop>
+map <Left> <Nop>
+map <Right> <Nop>
+map <Up> <Nop>
+map <Down> <Nop>
 
 "Treat long lines as break lines (useful when moving around in them)
 "se swap之后，同物理行上线直接跳
@@ -534,7 +522,7 @@ autocmd FileType c,cpp,java,go,php,javascript,puppet,python,rust,twig,xml,yml,pe
 
 
 " 定义函数AutoSetFileHead，自动插入文件头
-autocmd BufNewFile *.sh,*.py,*.c,*.cpp,*.h exec ":call AutoSetFileHead()"
+autocmd BufNewFile *.sh,*.py,*.c,*.cpp exec ":call AutoSetFileHead()"
 function! AutoSetFileHead()
 
 
@@ -575,7 +563,7 @@ function! AutoSetFileHead()
 
         call append(line(".")+1, "    > Author: GatieMe")
 
-        call append(line(".")+2, "    > Mail: gatieme@163.com ")
+        call append(line(".")+2, "    > Mail: gatieme@163.com")
 
         call append(line(".")+3, "    > Created Time: ".strftime("%c"))
 
@@ -606,60 +594,95 @@ function! AutoSetFileHead()
     endif
 
     "新建文件后，自动定位到文件末尾
+
     autocmd BufNewFile * normal G
-"   normal G
+"    normal G
 "    normal o
 "    normal o
 endfunc
-
 
 "C,C++的调试
 map <F8> :call Rungdb()<CR>
 
-func! Rungdb()
+func! Rungdb( )
 
-        exec "w"
-        exec "!g++ % -g -o %<"
-        exec "!gdb ./%<"
+    exec "w"
+
+    exec "!g++ % -g -o %<"
+
+    exec "!gdb ./%<"
 
 endfunc
-
 
 "C，C++, shell, python, javascript, ruby...等按F10运行
 map <F9> :call CompileRun()<CR>
+
 func! CompileRun()
     exec "w"
     if &filetype == 'c'
+
         exec "!g++ % -o %<"
+
         exec "!time ./%<"
+
         exec "!rm ./%<"
+
     elseif &filetype == 'cpp'
+
         exec "!g++ % -o %<"
+
         exec "!time ./%<"
+
         exec "!rm ./%<"
+
     elseif &filetype == 'java'
+
         exec "!javac %"
+
         exec "!time java %<"
+
         exec "!rm ./%<.class"
+
     elseif &filetype == 'sh'
+
         exec "!time bash %"
+
     elseif &filetype == 'python'
+
         exec "!time python %"
+
     elseif &filetype == 'html'
+
         exec "!chrome % &"
+
     elseif &filetype == 'go'
+
         exec "!go build %<"
+
         exec "!time go run %"
+
     elseif &filetype == 'mkd' "MarkDown 解决方案为VIM + Chrome浏览器的MarkDown Preview Plus插件，保存后实时预览
+
         exec "!chrome % &"
+
     elseif &filetype == 'javascript'
+
         exec "!time node %"
+
     elseif &filetype == 'coffee'
+
         exec "!time coffee %"
+
     elseif &filetype == 'ruby'
+
         exec "!time ruby %"
+
     endif
+
 endfunc
+
+
+
 
 " set some keyword to highlight
 if has("autocmd")
@@ -696,9 +719,9 @@ set background=dark
 colorscheme solarized
 set t_Co=256
 
-" colorscheme molokai
-" let g:molokai_original = 1
-" let g:rehash256 = 1
+"colorscheme molokai
+"let g:molokai_original = 1
+"let g:rehash256 = 1
 "colorscheme desert
 
 "设置标记一列的背景颜色和数字一行颜色一致
@@ -715,5 +738,3 @@ highlight clear SpellRare
 highlight SpellRare term=underline cterm=underline
 highlight clear SpellLocal
 highlight SpellLocal term=underline cterm=underline
-
-

@@ -332,13 +332,39 @@ Bundle 'tomasr/molokai'
 "################### 快速导航 ###################
 "目录导航
 Bundle 'scrooloose/nerdtree'
-map <leader>n :NERDTreeToggle<CR>
+"map <leader>n :NERDTreeToggle<CR>
+
+"  设置快捷键F3打开关闭NERDTree
+map <F7> :NERDTreeToggle<CR>
+imap <F7> <ESC>:NERDTreeToggle<CR>
+
+" 打开vim时，默认开启NERDTree，并将光标定位在右侧文件编辑终端中
+autocmd VimEnter * NERDTree
+wincmd w
+autocmd VimEnter * wincmd w
+
+
+"   将NERDTree的窗口设置在gvim窗口的左边
+let NERDTreeWinPos ="left"
+
+"当打开NERDTree窗口时，自动显示Bookmarks
+let NERDTreeShowBookmarks=1
+
 let NERDTreeHighlightCursorline=1
+let NERDTreeAutoCenter=1
+let NERDTreeMouseMode=2
+let NERDTreeShowFiles=1
+let NERDTreeShowHidden=1
+let NERDTreeShowLineNumbers=1
+let NERDTreeWinSize=31
+
 let NERDTreeIgnore=[ '\.pyc$', '\.pyo$', '\.obj$', '\.o$', '\.so$', '\.egg$', '^\.git$', '^\.svn$', '^\.hg$' ]
 "let NERDTreeDirArrows=0
 "let g:netrw_home='~/bak'
 "close vim if the only window left open is a NERDTree
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | end
+
+
 " s/v 分屏打开文件
 let g:NERDTreeMapOpenSplit = 's'
 let g:NERDTreeMapOpenVSplit = 'v'
